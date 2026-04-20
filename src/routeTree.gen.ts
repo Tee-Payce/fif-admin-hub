@@ -9,38 +9,132 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as DashboardUsersRouteImport } from './routes/dashboard.users'
+import { Route as DashboardSubscriptionsRouteImport } from './routes/dashboard.subscriptions'
+import { Route as DashboardSettingsRouteImport } from './routes/dashboard.settings'
+import { Route as DashboardPostsRouteImport } from './routes/dashboard.posts'
+import { Route as DashboardLibraryRouteImport } from './routes/dashboard.library'
 
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardUsersRoute = DashboardUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardSubscriptionsRoute = DashboardSubscriptionsRouteImport.update({
+  id: '/subscriptions',
+  path: '/subscriptions',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardPostsRoute = DashboardPostsRouteImport.update({
+  id: '/posts',
+  path: '/posts',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardLibraryRoute = DashboardLibraryRouteImport.update({
+  id: '/library',
+  path: '/library',
+  getParentRoute: () => DashboardRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard/library': typeof DashboardLibraryRoute
+  '/dashboard/posts': typeof DashboardPostsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/subscriptions': typeof DashboardSubscriptionsRoute
+  '/dashboard/users': typeof DashboardUsersRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dashboard/library': typeof DashboardLibraryRoute
+  '/dashboard/posts': typeof DashboardPostsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/subscriptions': typeof DashboardSubscriptionsRoute
+  '/dashboard/users': typeof DashboardUsersRoute
+  '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard/library': typeof DashboardLibraryRoute
+  '/dashboard/posts': typeof DashboardPostsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/subscriptions': typeof DashboardSubscriptionsRoute
+  '/dashboard/users': typeof DashboardUsersRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/dashboard/library'
+    | '/dashboard/posts'
+    | '/dashboard/settings'
+    | '/dashboard/subscriptions'
+    | '/dashboard/users'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/dashboard/library'
+    | '/dashboard/posts'
+    | '/dashboard/settings'
+    | '/dashboard/subscriptions'
+    | '/dashboard/users'
+    | '/dashboard'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/dashboard/library'
+    | '/dashboard/posts'
+    | '/dashboard/settings'
+    | '/dashboard/subscriptions'
+    | '/dashboard/users'
+    | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,21 +142,77 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/users': {
+      id: '/dashboard/users'
+      path: '/users'
+      fullPath: '/dashboard/users'
+      preLoaderRoute: typeof DashboardUsersRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/subscriptions': {
+      id: '/dashboard/subscriptions'
+      path: '/subscriptions'
+      fullPath: '/dashboard/subscriptions'
+      preLoaderRoute: typeof DashboardSubscriptionsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/settings': {
+      id: '/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof DashboardSettingsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/posts': {
+      id: '/dashboard/posts'
+      path: '/posts'
+      fullPath: '/dashboard/posts'
+      preLoaderRoute: typeof DashboardPostsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/library': {
+      id: '/dashboard/library'
+      path: '/library'
+      fullPath: '/dashboard/library'
+      preLoaderRoute: typeof DashboardLibraryRouteImport
+      parentRoute: typeof DashboardRoute
+    }
   }
 }
 
+interface DashboardRouteChildren {
+  DashboardLibraryRoute: typeof DashboardLibraryRoute
+  DashboardPostsRoute: typeof DashboardPostsRoute
+  DashboardSettingsRoute: typeof DashboardSettingsRoute
+  DashboardSubscriptionsRoute: typeof DashboardSubscriptionsRoute
+  DashboardUsersRoute: typeof DashboardUsersRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardLibraryRoute: DashboardLibraryRoute,
+  DashboardPostsRoute: DashboardPostsRoute,
+  DashboardSettingsRoute: DashboardSettingsRoute,
+  DashboardSubscriptionsRoute: DashboardSubscriptionsRoute,
+  DashboardUsersRoute: DashboardUsersRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DashboardRoute: DashboardRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
