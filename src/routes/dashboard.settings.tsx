@@ -13,8 +13,10 @@ export const Route = createFileRoute("/dashboard/settings")({
 function SettingsPage() {
   const { currentUser } = useAuth();
   const [appName, setAppName] = useState("FIF App");
-  const [name, setName] = useState(currentUser.name);
-  const [email, setEmail] = useState(currentUser.email);
+  const [name, setName] = useState(currentUser?.name || "");
+  const [email, setEmail] = useState(currentUser?.email || "");
+
+  if (!currentUser) return null;
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">

@@ -8,26 +8,34 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import type { Role } from "@/data/mock";
+import { useNavigate } from "@tanstack/react-router";
 
-const ROLE_LABEL: Record<Role, string> = {
+const ROLE_LABEL: Record<string, string> = {
   system_admin: "System Admin",
   posts_admin: "Posts Admin",
   library_admin: "Library Admin",
+  general_user: "Member",
 };
 
 export function Topbar() {
-  const { currentUser, currentRole, setRole } = useAuth();
+  const { currentUser, currentRole, logout } = useAuth();
+  const navigate = useNavigate();
+
+  if (!currentUser) return null;
+
   const initials = currentUser.name
     .split(" ")
     .map((n) => n[0])
     .slice(0, 2)
     .join("");
+
+  const handleLogout = () => {
+    logout();
+    navigate({ to: "/login" });
+  };
 
   return (
     <header className="h-16 border-b border-border bg-card/80 backdrop-blur sticky top-0 z-20">
@@ -43,9 +51,11 @@ export function Topbar() {
         </div>
         <div className="flex-1 md:hidden font-semibold">FIF Admin</div>
 
-        <Badge variant="outline" className="hidden sm:inline-flex border-gold/40 text-foreground bg-gold/10">
-          {ROLE_LABEL[currentRole]}
-        </Badge>
+        {currentRole && (
+          <Badge variant="outline" className="hidden sm:inline-flex border-gold/40 text-foreground bg-gold/10 capitalize">
+            {ROLE_LABEL[currentRole] || currentRole.replace('_', ' ')}
+          </Badge>
+        )}
 
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
@@ -68,19 +78,7 @@ export function Topbar() {
               <div className="text-xs text-muted-foreground font-normal">{currentUser.email}</div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuLabel className="text-xs text-muted-foreground">
-              Switch role (demo)
-            </DropdownMenuLabel>
-            <DropdownMenuRadioGroup
-              value={currentRole}
-              onValueChange={(v) => setRole(v as Role)}
-            >
-              <DropdownMenuRadioItem value="system_admin">System Admin</DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="posts_admin">Posts Admin</DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="library_admin">Library Admin</DropdownMenuRadioItem>
-            </DropdownMenuRadioGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive">
+            <DropdownMenuItem onClick={handleLogout} className="text-destructive cursor-pointer">
               <LogOut className="h-4 w-4 mr-2" /> Logout
             </DropdownMenuItem>
           </DropdownMenuContent>

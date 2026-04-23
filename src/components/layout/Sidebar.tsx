@@ -22,7 +22,7 @@ const NAV = [
 
 export function Sidebar() {
   const role = useAuth((s) => s.currentRole);
-  const allowed = ROLE_ACCESS[role];
+  const allowed = role ? ROLE_ACCESS[role] : [];
   const { pathname } = useLocation();
 
   return (

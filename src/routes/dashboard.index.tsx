@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Users, BookOpen, Video, Megaphone, CreditCard } from "lucide-react";
+import { Users, BookOpen, Video, Megaphone, CreditCard, Loader2 } from "lucide-react";
+import { useEffect } from "react";
 import {
   AreaChart,
   Area,
@@ -15,7 +16,6 @@ import {
 } from "recharts";
 import { StatCard } from "@/components/StatCard";
 import { useData } from "@/store";
-import { userGrowth, subscriptionDistribution } from "@/data/mock";
 
 export const Route = createFileRoute("/dashboard/")({
   head: () => ({
@@ -24,12 +24,22 @@ export const Route = createFileRoute("/dashboard/")({
   component: Overview,
 });
 
-const COLORS = ["oklch(0.32 0.18 295)", "oklch(0.78 0.14 85)", "oklch(0.55 0.22 295)"];
+const COLORS = ["oklch(0.32 0.18 295)", "oklch(0.78 0.14 85)", "oklch(0.55 0.22 295)", "oklch(0.4 0.2 150)"];
 
 function Overview() {
-  const { users, books, sermons, posts } = useData();
-  const activeSubs = users.filter((u) => u.tier !== "Standard" && u.active).length;
-  const liveStories = posts.filter((p) => Date.now() - p.createdAt < 24 * 60 * 60 * 1000).length;
+  const { stats, fetchStats, loading } = useData();
+
+  useEffect(() => {
+    fetchStats();
+  }, [fetchStats]);
+
+  if (!stats) {
+    return (
+      <div className="flex h-96 items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
@@ -45,11 +55,11 @@ function Overview() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        <StatCard label="Total Users" value={users.length.toLocaleString()} icon={Users} trend="+12% this month" />
-        <StatCard label="Active Subs" value={activeSubs} icon={CreditCard} accent="gold" trend="+5%" />
-        <StatCard label="Total Books" value={books.length} icon={BookOpen} />
-        <StatCard label="Total Sermons" value={sermons.length} icon={Video} accent="success" />
-        <StatCard label="Live Stories" value={liveStories} icon={Megaphone} accent="gold" trend="24h posts" />
+        <StatCard label="Total Users" value={stats.totalUsers.toLocaleString()} icon={Users} />
+        <StatCard label="Active Stories" value={stats.activeStories} icon={Megaphone} accent="gold" />
+        <StatCard label="Total Books" value={stats.totalBooks} icon={BookOpen} />
+        <StatCard label="Total Sermons" value={stats.totalSermons} icon={Video} accent="success" />
+        <StatCard label="Live Stories" value={stats.activeStories} icon={Megaphone} accent="gold" trend="24h posts" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -57,12 +67,12 @@ function Overview() {
           <div className="flex items-baseline justify-between mb-4">
             <div>
               <h3 className="font-semibold">User Growth</h3>
-              <p className="text-sm text-muted-foreground">Last 6 months</p>
+              <p className="text-sm text-muted-foreground">Historical data</p>
             </div>
           </div>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={userGrowth}>
+              <AreaChart data={stats.userGrowth}>
                 <defs>
                   <linearGradient id="ug" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="oklch(0.45 0.22 295)" stopOpacity={0.4} />
@@ -86,13 +96,13 @@ function Overview() {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={subscriptionDistribution}
+                  data={stats.subscriptionBreakdown}
                   innerRadius={55}
                   outerRadius={85}
                   paddingAngle={3}
                   dataKey="value"
                 >
-                  {subscriptionDistribution.map((_, i) => (
+                  {stats.subscriptionBreakdown.map((_: any, i: number) => (
                     <Cell key={i} fill={COLORS[i % COLORS.length]} />
                   ))}
                 </Pie>

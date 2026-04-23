@@ -22,7 +22,7 @@ function Landing() {
           <div className="font-bold text-lg">FIF App</div>
         </div>
         <Link
-          to="/dashboard"
+          to="/login"
           className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 backdrop-blur hover:bg-white/20 transition text-sm font-medium"
         >
           Open Admin <ArrowRight className="h-4 w-4" />
@@ -42,7 +42,7 @@ function Landing() {
           </p>
           <div className="mt-8 flex items-center justify-center gap-3">
             <Link
-              to="/dashboard"
+              to="/login"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-primary font-semibold bg-white hover:bg-white/90 transition"
               style={{ boxShadow: "var(--shadow-gold)" }}
             >
