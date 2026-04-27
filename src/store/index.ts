@@ -17,26 +17,38 @@ interface AuthState {
   setRole: (r: Role) => void;
 }
 
-export const useAuth = create<AuthState>((set) => ({
-  currentRole: null,
-  currentUser: null,
-  isAuthenticated: !!localStorage.getItem('token'),
-  login: async (email, password) => {
-    const response = await client.post('/auth/login', { email, password });
-    const { token, user } = response.data;
-    localStorage.setItem('token', token);
-    set({ 
-      currentUser: { name: user.name, email: user.email },
-      currentRole: user.role,
-      isAuthenticated: true 
-    });
-  },
-  logout: () => {
-    localStorage.removeItem('token');
-    set({ currentUser: null, currentRole: null, isAuthenticated: false });
-  },
-  setRole: (r) => set({ currentRole: r }),
-}));
+export const useAuth = create<AuthState>((set) => {
+  // Re-hydrate state from localStorage
+  const storedUser = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+  const user = storedUser ? JSON.parse(storedUser) : null;
+  
+  return {
+    currentRole: user?.role || null,
+    currentUser: user ? { name: user.name, email: user.email } : null,
+    isAuthenticated: typeof window !== 'undefined' ? !!localStorage.getItem('token') : false,
+    login: async (email, password) => {
+      const response = await client.post('/auth/login', { email, password });
+      const { token, user } = response.data;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+      }
+      set({ 
+        currentUser: { name: user.name, email: user.email },
+        currentRole: user.role,
+        isAuthenticated: true 
+      });
+    },
+    logout: () => {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
+      set({ currentUser: null, currentRole: null, isAuthenticated: false });
+    },
+    setRole: (r) => set({ currentRole: r }),
+  };
+});
 
 interface DataState {
   users: User[];
@@ -177,7 +189,7 @@ export const useData = create<DataState>((set, get) => ({
 }));
 
 export const ROLE_ACCESS: Record<Role, string[]> = {
-  system_admin: ["overview", "posts", "library", "users", "subscriptions", "settings"],
-  posts_admin: ["overview", "posts", "settings"],
-  library_admin: ["overview", "library", "settings"],
+  system_admin: ["overview", "posts", "library", "moderation", "users", "subscriptions", "settings"],
+  posts_admin: ["overview", "posts", "moderation", "settings"],
+  library_admin: ["overview", "library", "moderation", "settings"],
 };

@@ -7,6 +7,7 @@ import {
   CreditCard,
   Settings,
   Crown,
+  MessageSquare,
 } from "lucide-react";
 import { useAuth, ROLE_ACCESS } from "@/store";
 import { cn } from "@/lib/utils";
@@ -15,6 +16,7 @@ const NAV = [
   { key: "overview", to: "/dashboard", label: "Overview", icon: LayoutDashboard },
   { key: "posts", to: "/dashboard/posts", label: "Apostles Update", icon: Megaphone },
   { key: "library", to: "/dashboard/library", label: "Library", icon: Library },
+  { key: "moderation", to: "/dashboard/moderation", label: "Moderation", icon: Users }, // Using Users icon as a fallback, or we could import MessageSquare from lucide-react
   { key: "users", to: "/dashboard/users", label: "Users", icon: Users },
   { key: "subscriptions", to: "/dashboard/subscriptions", label: "Subscriptions", icon: CreditCard },
   { key: "settings", to: "/dashboard/settings", label: "Settings", icon: Settings },

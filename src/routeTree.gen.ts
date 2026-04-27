@@ -17,6 +17,7 @@ import { Route as DashboardUsersRouteImport } from './routes/dashboard.users'
 import { Route as DashboardSubscriptionsRouteImport } from './routes/dashboard.subscriptions'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard.settings'
 import { Route as DashboardPostsRouteImport } from './routes/dashboard.posts'
+import { Route as DashboardModerationRouteImport } from './routes/dashboard.moderation'
 import { Route as DashboardLibraryRouteImport } from './routes/dashboard.library'
 
 const LoginRoute = LoginRouteImport.update({
@@ -59,6 +60,11 @@ const DashboardPostsRoute = DashboardPostsRouteImport.update({
   path: '/posts',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardModerationRoute = DashboardModerationRouteImport.update({
+  id: '/moderation',
+  path: '/moderation',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardLibraryRoute = DashboardLibraryRouteImport.update({
   id: '/library',
   path: '/library',
@@ -70,6 +76,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
   '/dashboard/library': typeof DashboardLibraryRoute
+  '/dashboard/moderation': typeof DashboardModerationRoute
   '/dashboard/posts': typeof DashboardPostsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/subscriptions': typeof DashboardSubscriptionsRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/dashboard/library': typeof DashboardLibraryRoute
+  '/dashboard/moderation': typeof DashboardModerationRoute
   '/dashboard/posts': typeof DashboardPostsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/subscriptions': typeof DashboardSubscriptionsRoute
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
   '/dashboard/library': typeof DashboardLibraryRoute
+  '/dashboard/moderation': typeof DashboardModerationRoute
   '/dashboard/posts': typeof DashboardPostsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/subscriptions': typeof DashboardSubscriptionsRoute
@@ -105,6 +114,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/dashboard/library'
+    | '/dashboard/moderation'
     | '/dashboard/posts'
     | '/dashboard/settings'
     | '/dashboard/subscriptions'
@@ -115,6 +125,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/dashboard/library'
+    | '/dashboard/moderation'
     | '/dashboard/posts'
     | '/dashboard/settings'
     | '/dashboard/subscriptions'
@@ -126,6 +137,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/dashboard/library'
+    | '/dashboard/moderation'
     | '/dashboard/posts'
     | '/dashboard/settings'
     | '/dashboard/subscriptions'
@@ -197,6 +209,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardPostsRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/moderation': {
+      id: '/dashboard/moderation'
+      path: '/moderation'
+      fullPath: '/dashboard/moderation'
+      preLoaderRoute: typeof DashboardModerationRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/library': {
       id: '/dashboard/library'
       path: '/library'
@@ -209,6 +228,7 @@ declare module '@tanstack/react-router' {
 
 interface DashboardRouteChildren {
   DashboardLibraryRoute: typeof DashboardLibraryRoute
+  DashboardModerationRoute: typeof DashboardModerationRoute
   DashboardPostsRoute: typeof DashboardPostsRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
   DashboardSubscriptionsRoute: typeof DashboardSubscriptionsRoute
@@ -218,6 +238,7 @@ interface DashboardRouteChildren {
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardLibraryRoute: DashboardLibraryRoute,
+  DashboardModerationRoute: DashboardModerationRoute,
   DashboardPostsRoute: DashboardPostsRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,
   DashboardSubscriptionsRoute: DashboardSubscriptionsRoute,
