@@ -240,25 +240,62 @@ function BooksTab() {
 function SermonsTab() {
   const { sermons, addNewSermon, loading } = useData();
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ title: "", description: "", duration: "", videoUrl: "" });
+  const [videoSource, setVideoSource] = useState<"upload" | "url">("url");
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [thumbFile, setThumbFile] = useState<File | null>(null);
+  const [form, setForm] = useState({ 
+    title: "", 
+    description: "", 
+    duration: "", 
+    videoUrl: "" 
+  });
 
   const openNew = () => {
     setForm({ title: "", description: "", duration: "", videoUrl: "" });
+    setVideoFile(null);
+    setThumbFile(null);
+    setVideoSource("url");
     setOpen(true);
   };
 
   const submit = async () => {
-    if (!form.title || !form.videoUrl) {
-      toast.error("Title and URL are required");
+    if (!form.title) {
+      toast.error("Title is required");
       return;
     }
-    const toastId = toast.loading("Adding video sermon to database...");
+    if (videoSource === "url" && !form.videoUrl) {
+      toast.error("Video URL is required");
+      return;
+    }
+    if (videoSource === "upload" && !videoFile) {
+      toast.error("Video file is required");
+      return;
+    }
+
+    const toastId = toast.loading(videoSource === "upload" ? "Uploading video to Backblaze..." : "Adding sermon...");
+    
     try {
-      await addNewSermon(form);
+      const formData = new FormData();
+      formData.append("title", form.title);
+      formData.append("description", form.description);
+      formData.append("duration", form.duration);
+      formData.append("videoType", videoSource);
+      
+      if (videoSource === "url") {
+        formData.append("videoUrl", form.videoUrl);
+      } else if (videoFile) {
+        formData.append("video", videoFile);
+      }
+
+      if (thumbFile) {
+        formData.append("thumbnail", thumbFile);
+      }
+
+      await addNewSermon(formData);
       toast.success("Sermon added successfully!", { id: toastId });
       setOpen(false);
     } catch (error) {
-      toast.error("Failed to add sermon. Please check the details.", { id: toastId });
+      toast.error("Failed to add sermon.", { id: toastId });
     }
   };
 
@@ -273,11 +310,20 @@ function SermonsTab() {
         {sermons.map((s: any) => (
           <div key={s.id} className="rounded-2xl border border-border bg-card overflow-hidden transition hover:shadow-md" style={{ boxShadow: "var(--shadow-card)" }}>
             <div className="aspect-video flex items-center justify-center relative group" style={{ background: "var(--gradient-hero)" }}>
-              <div className="h-14 w-14 rounded-full bg-white/20 backdrop-blur flex items-center justify-center group-hover:scale-110 transition">
-                <div className="w-0 h-0 border-l-[14px] border-l-white border-y-[10px] border-y-transparent ml-1" />
-              </div>
+              {s.thumbnailUrl ? (
+                <img src={s.thumbnailUrl} className="w-full h-full object-cover" alt={s.title} />
+              ) : (
+                <div className="h-14 w-14 rounded-full bg-white/20 backdrop-blur flex items-center justify-center group-hover:scale-110 transition">
+                  <div className="w-0 h-0 border-l-[14px] border-l-white border-y-[10px] border-y-transparent ml-1" />
+                </div>
+              )}
               <div className="absolute top-2 right-2">
                  <Badge className="bg-black/50 backdrop-blur text-white border-none">{s.duration}</Badge>
+              </div>
+              <div className="absolute top-2 left-2">
+                 <Badge variant="outline" className="bg-white/10 backdrop-blur text-white border-white/20 uppercase text-[10px]">
+                   {s.videoType === 'url' ? 'Link' : 'Uploaded'}
+                 </Badge>
               </div>
             </div>
             <div className="p-4 space-y-2">
@@ -294,34 +340,87 @@ function SermonsTab() {
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>Add Sermon</DialogTitle>
+            <DialogTitle>Add Video Sermon</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Video Source</Label>
+              <div className="flex gap-2">
+                <Button 
+                  type="button"
+                  variant={videoSource === "url" ? "default" : "outline"}
+                  className="flex-1 gap-2"
+                  onClick={() => setVideoSource("url")}
+                >
+                  <Link2 className="h-4 w-4" /> Video Link
+                </Button>
+                <Button 
+                  type="button"
+                  variant={videoSource === "upload" ? "default" : "outline"}
+                  className="flex-1 gap-2"
+                  onClick={() => setVideoSource("upload")}
+                >
+                  <Upload className="h-4 w-4" /> Upload File
+                </Button>
+              </div>
+            </div>
+
             <div className="space-y-2">
               <Label>Title</Label>
-              <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+              <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Sermon Title" />
             </div>
+
             <div className="space-y-2">
               <Label>Description</Label>
-              <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+              <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Sermon details..." />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Duration</Label>
-                <Input placeholder="48:12" value={form.duration} onChange={(e) => setForm({ ...form, duration: e.target.value })} />
+                <Input placeholder="45:00" value={form.duration} onChange={(e) => setForm({ ...form, duration: e.target.value })} />
               </div>
+              
+              {videoSource === "url" && (
+                <div className="space-y-2">
+                  <Label>Video URL</Label>
+                  <Input placeholder="https://youtube.com/..." value={form.videoUrl} onChange={(e) => setForm({ ...form, videoUrl: e.target.value })} />
+                </div>
+              )}
+            </div>
+
+            {videoSource === "upload" && (
               <div className="space-y-2">
-                <Label>Video URL</Label>
-                <Input placeholder="https://…" value={form.videoUrl} onChange={(e) => setForm({ ...form, videoUrl: e.target.value })} />
+                <Label>Video File</Label>
+                <div 
+                  className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer hover:bg-muted/50 transition ${videoFile ? 'border-primary bg-primary/5' : 'border-border'}`}
+                  onClick={() => document.getElementById('video-file')?.click()}
+                >
+                  <Upload className={`h-6 w-6 mx-auto mb-2 ${videoFile ? 'text-primary' : 'text-muted-foreground'}`} />
+                  <p className="text-xs text-muted-foreground">{videoFile ? videoFile.name : "Select video (MP4, MOV)"}</p>
+                  <input id="video-file" type="file" className="hidden" accept="video/*" onChange={(e) => setVideoFile(e.target.files?.[0] || null)} />
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label>Thumbnail Image (Optional)</Label>
+              <div 
+                className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer hover:bg-muted/50 transition ${thumbFile ? 'border-primary bg-primary/5' : 'border-border'}`}
+                onClick={() => document.getElementById('thumb-file')?.click()}
+              >
+                <Upload className={`h-6 w-6 mx-auto mb-2 ${thumbFile ? 'text-primary' : 'text-muted-foreground'}`} />
+                <p className="text-xs text-muted-foreground">{thumbFile ? thumbFile.name : "Select cover image (JPG, PNG)"}</p>
+                <input id="thumb-file" type="file" className="hidden" accept="image/*" onChange={(e) => setThumbFile(e.target.files?.[0] || null)} />
               </div>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
             <Button onClick={submit} disabled={loading} style={{ background: "var(--gradient-primary)" }}>
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Add Sermon"}
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save Sermon"}
             </Button>
           </DialogFooter>
         </DialogContent>
