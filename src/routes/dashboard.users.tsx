@@ -18,7 +18,8 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
 import { useData } from "@/store";
-import { Loader2 } from "lucide-react";
+import { Users as UsersIcon } from "lucide-react";
+import { TableSkeleton, EmptyState, PageStatusBadge } from "@/components/StateIndicators";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/dashboard/users")({
@@ -74,8 +75,15 @@ function UsersPage() {
           <h1 className="text-2xl font-bold">Users Management</h1>
           <p className="text-muted-foreground">{users.length} total members</p>
         </div>
-        {loading && <Loader2 className="h-5 w-5 animate-spin text-primary" />}
+        <PageStatusBadge loading={loading} count={users.length} unit="users" />
       </div>
+      {loading && users.length === 0 ? (
+        <div className="rounded-2xl border border-border bg-card overflow-hidden" style={{ boxShadow: "var(--shadow-card)" }}>
+          <TableSkeleton rows={6} cols={5} />
+        </div>
+      ) : users.length === 0 ? (
+        <EmptyState icon={UsersIcon} title="No users yet" description="Members will appear here once they sign up." />
+      ) : (
       <div className="rounded-2xl border border-border bg-card overflow-hidden" style={{ boxShadow: "var(--shadow-card)" }}>
         <Table>
           <TableHeader>
@@ -148,6 +156,7 @@ function UsersPage() {
           </TableBody>
         </Table>
       </div>
+      )}
     </div>
   );
 }

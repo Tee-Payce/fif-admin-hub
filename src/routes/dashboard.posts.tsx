@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useData } from "@/store";
+import { CardGridSkeleton, EmptyState, PageStatusBadge } from "@/components/StateIndicators";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/dashboard/posts")({
@@ -93,6 +94,7 @@ function PostsPage() {
         <div>
           <h1 className="text-2xl font-bold">Apostles Update</h1>
           <p className="text-muted-foreground">24-hour story-style posts.</p>
+          <div className="mt-2"><PageStatusBadge loading={loading} count={stories.length} unit="active" /></div>
         </div>
         <Button onClick={() => setOpen(true)} className="gap-2" style={{ background: "var(--gradient-primary)" }}>
           <Plus className="h-4 w-4" /> New Post
@@ -158,10 +160,19 @@ function PostsPage() {
         </DialogContent>
       </Dialog>
 
-      {stories.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-border p-12 text-center">
-          <p className="text-muted-foreground">No active updates. Create one to get started.</p>
-        </div>
+      {loading && stories.length === 0 ? (
+        <CardGridSkeleton count={4} />
+      ) : stories.length === 0 ? (
+        <EmptyState
+          icon={ImageIcon}
+          title="No active updates"
+          description="Create a 24-hour update to share inspiration with your community."
+          action={
+            <Button onClick={() => setOpen(true)} className="gap-2" style={{ background: "var(--gradient-primary)" }}>
+              <Plus className="h-4 w-4" /> New Post
+            </Button>
+          }
+        />
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {stories.map((p: any) => {
