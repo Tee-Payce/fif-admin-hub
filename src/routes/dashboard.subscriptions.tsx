@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState } from "react";
-import { Check, Crown, Save, Loader2, TrendingUp, Users, DollarSign, BarChart3 } from "lucide-react";
+import { Check, Save, Loader2, TrendingUp, Users, DollarSign, BarChart3 } from "lucide-react";
 import {
   BarChart,
   Bar,
@@ -172,7 +172,7 @@ function SubsPage() {
           >
             {plan.id === "VVIP" && (
               <div className="absolute top-3 right-3">
-                <Crown className="h-5 w-5 text-gold" />
+                <img src="/assets/fif-logo.png" className="h-5 w-5 object-contain" />
               </div>
             )}
             <div className={plan.id === "VVIP" ? "text-primary-foreground" : ""}>

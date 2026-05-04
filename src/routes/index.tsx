@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Crown, ArrowRight, Shield, Sparkles, Library } from "lucide-react";
+import { ArrowRight, Shield, Sparkles, Library } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -17,7 +17,7 @@ function Landing() {
       <header className="px-6 md:px-10 py-6 flex items-center justify-between text-primary-foreground">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: "var(--gradient-gold)" }}>
-            <Crown className="h-5 w-5" />
+            <img src="/assets/fif-logo.png" className="h-5 w-5 object-contain" />
           </div>
           <div className="font-bold text-lg">FIF App</div>
         </div>

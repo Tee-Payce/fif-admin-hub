@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useAuth } from "@/store";
-import { Crown, Lock, Mail, Loader2 } from "lucide-react";
+import { Lock, Mail, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
@@ -35,7 +35,7 @@ function Login() {
         <div className="p-8 md:p-12">
           <div className="flex flex-col items-center mb-8">
             <div className="h-16 w-16 rounded-2xl flex items-center justify-center mb-4" style={{ background: "var(--gradient-gold)" }}>
-              <Crown className="h-8 w-8 text-white" />
+              <img src="/assets/fif-logo.png" className="h-8 w-8 object-contain" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900">Admin Login</h1>
             <p className="text-gray-500 text-sm mt-1">Enter your credentials to access the console</p>

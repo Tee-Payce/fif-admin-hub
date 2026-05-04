@@ -6,7 +6,6 @@ import {
   Users,
   CreditCard,
   Settings,
-  Crown,
   MessageSquare,
 } from "lucide-react";
 import { useAuth, ROLE_ACCESS } from "@/store";
@@ -31,7 +30,7 @@ export function Sidebar() {
     <aside className="hidden md:flex w-64 shrink-0 flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border">
       <div className="px-6 py-6 flex items-center gap-3 border-b border-sidebar-border">
         <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: "var(--gradient-gold)" }}>
-          <Crown className="h-5 w-5 text-sidebar-primary-foreground" />
+          <img src="/assets/fif-logo.png" className="h-10 w-10 object-contain" />
         </div>
         <div>
           <div className="font-bold tracking-tight">FIF App</div>
