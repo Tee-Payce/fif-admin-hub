@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { getComments, getReviews, deleteComment, deleteReview } from "@/api/interactions";
 import { Trash2, MessageCircle, Star } from "lucide-react";
+import { TableSkeleton, EmptyState, PageStatusBadge, ErrorState } from "@/components/StateIndicators";
 
 export const Route = createFileRoute("/dashboard/moderation")({
   component: ModerationRoute,
@@ -12,6 +13,7 @@ function ModerationRoute() {
   const [comments, setComments] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchData();
@@ -19,6 +21,7 @@ function ModerationRoute() {
 
   const fetchData = async () => {
     setLoading(true);
+    setError(null);
     try {
       const [commentsRes, reviewsRes] = await Promise.all([
         getComments(),
@@ -26,8 +29,9 @@ function ModerationRoute() {
       ]);
       setComments(commentsRes.data);
       setReviews(reviewsRes.data);
-    } catch (error) {
-      console.error("Failed to fetch moderation data", error);
+    } catch (err: any) {
+      console.error("Failed to fetch moderation data", err);
+      setError(err?.message || "Could not load moderation data.");
     } finally {
       setLoading(false);
     }
@@ -62,6 +66,7 @@ function ModerationRoute() {
           <h1 className="text-2xl font-bold">Moderation</h1>
           <p className="text-muted-foreground">Manage user comments and book reviews across the platform.</p>
         </div>
+        <PageStatusBadge loading={loading} count={comments.length + reviews.length} unit="items" />
       </div>
 
       <div className="flex gap-4 border-b border-border/40 pb-px">
@@ -87,8 +92,12 @@ function ModerationRoute() {
         </button>
       </div>
 
-      {loading ? (
-        <div className="flex justify-center p-12 text-muted-foreground">Loading...</div>
+      {error ? (
+        <ErrorState message={error} onRetry={fetchData} />
+      ) : loading ? (
+        <div className="bg-card border border-border/40 rounded-xl overflow-hidden shadow-sm">
+          <TableSkeleton rows={5} cols={5} />
+        </div>
       ) : activeTab === "comments" ? (
         <div className="bg-card border border-border/40 rounded-xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
