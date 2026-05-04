@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useData } from "@/store";
+import { Skeleton, PageStatusBadge } from "@/components/StateIndicators";
 import { toast } from "sonner";
 import type { Tier } from "@/data/mock";
 
@@ -60,6 +61,7 @@ function SubsPage() {
         <div>
           <h1 className="text-2xl font-bold">Subscriptions</h1>
           <p className="text-muted-foreground">Manage pricing and monitor growth.</p>
+          <div className="mt-2"><PageStatusBadge loading={!stats || loading} count={totalSubscribers} unit="subscribers" /></div>
         </div>
         <div className="flex gap-4">
           <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/10 text-primary border border-primary/20">
@@ -92,6 +94,9 @@ function SubsPage() {
           </div>
           
           <div className="h-80 w-full">
+          {!stats ? (
+            <Skeleton className="h-full w-full rounded-xl" />
+          ) : (
             <ResponsiveContainer width="100%" height="100%">
               {chartView === "count" ? (
                 <BarChart data={stats?.subscriptionGrowth}>
@@ -120,6 +125,7 @@ function SubsPage() {
                 </AreaChart>
               )}
             </ResponsiveContainer>
+          )}
           </div>
         </div>
 
@@ -130,7 +136,9 @@ function SubsPage() {
             <h3 className="font-bold">Summary</h3>
           </div>
           <div className="flex-1 space-y-4">
-            {stats?.subscriptionAnalytics?.map((s: any) => (
+            {!stats
+              ? Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-20 rounded-xl" />)
+              : stats?.subscriptionAnalytics?.map((s: any) => (
               <div key={s.tier} className="p-4 rounded-xl bg-muted/30 border border-border/50">
                 <div className="flex justify-between items-center mb-1">
                   <span className="font-semibold capitalize">{s.tier.toLowerCase()}</span>
