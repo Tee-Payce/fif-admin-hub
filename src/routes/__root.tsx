@@ -29,14 +29,18 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "FIF App" },
+      { name: "description", content: "Admin Dashboard" },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "FIF App" },
+      { property: "og:description", content: "Admin Dashboard" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "FIF App" },
+      { name: "twitter:description", content: "Admin Dashboard" },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/03d56e27-99af-46db-bc5a-f025c566fe05/id-preview-21667f2a--96751307-5bf3-46e5-89f0-1362403db98c.lovable.app-1777886179610.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/03d56e27-99af-46db-bc5a-f025c566fe05/id-preview-21667f2a--96751307-5bf3-46e5-89f0-1362403db98c.lovable.app-1777886179610.png" },
     ],
     links: [
       {
