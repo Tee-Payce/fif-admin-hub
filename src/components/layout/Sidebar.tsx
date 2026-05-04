@@ -15,7 +15,8 @@ const NAV = [
   { key: "overview", to: "/dashboard", label: "Overview", icon: LayoutDashboard },
   { key: "posts", to: "/dashboard/posts", label: "Apostles Update", icon: Megaphone },
   { key: "library", to: "/dashboard/library", label: "Library", icon: Library },
-  { key: "moderation", to: "/dashboard/moderation", label: "Moderation", icon: Users }, // Using Users icon as a fallback, or we could import MessageSquare from lucide-react
+  { key: "posts_moderation", to: "/dashboard/moderation", label: "Comments", icon: MessageSquare, params: { tab: "comments" } },
+  { key: "library_moderation", to: "/dashboard/moderation", label: "Reviews", icon: MessageSquare, params: { tab: "reviews" } },
   { key: "users", to: "/dashboard/users", label: "Users", icon: Users },
   { key: "subscriptions", to: "/dashboard/subscriptions", label: "Subscriptions", icon: CreditCard },
   { key: "settings", to: "/dashboard/settings", label: "Settings", icon: Settings },
@@ -47,6 +48,7 @@ export function Sidebar() {
             <Link
               key={item.key}
               to={item.to}
+              search={item.params}
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
                 active

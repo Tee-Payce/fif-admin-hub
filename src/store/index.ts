@@ -214,7 +214,7 @@ export const useData = create<DataState>((set, get) => ({
 }));
 
 export const ROLE_ACCESS: Record<Role, string[]> = {
-  system_admin: ["overview", "posts", "library", "moderation", "users", "subscriptions", "settings"],
-  posts_admin: ["overview", "posts", "moderation", "settings"],
-  library_admin: ["overview", "library", "moderation", "settings"],
+  system_admin: ["overview", "posts", "library", "posts_moderation", "library_moderation", "users", "subscriptions", "settings"],
+  posts_admin: ["overview", "posts", "posts_moderation", "settings"],
+  library_admin: ["overview", "library", "library_moderation", "settings"],
 };
