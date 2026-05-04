@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Users, BookOpen, Video, Megaphone, CreditCard, Loader2 } from "lucide-react";
+import { Users, BookOpen, Video, Megaphone, CreditCard } from "lucide-react";
 import { useEffect } from "react";
+import { PageLoader, StatCardSkeleton, Skeleton, PageStatusBadge } from "@/components/StateIndicators";
 import {
   AreaChart,
   Area,
@@ -35,8 +36,15 @@ function Overview() {
 
   if (!stats) {
     return (
-      <div className="flex h-96 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="space-y-6 max-w-7xl mx-auto">
+        <Skeleton className="h-32 rounded-2xl" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          {Array.from({ length: 5 }).map((_, i) => <StatCardSkeleton key={i} />)}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <Skeleton className="lg:col-span-2 h-96 rounded-2xl" />
+          <Skeleton className="h-96 rounded-2xl" />
+        </div>
       </div>
     );
   }
