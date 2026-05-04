@@ -30,6 +30,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useData } from "@/store";
+import { TableSkeleton, CardGridSkeleton, EmptyState, PageStatusBadge } from "@/components/StateIndicators";
+import { BookOpen, Video as VideoIcon } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/dashboard/library")({
@@ -135,11 +137,21 @@ function BooksTab() {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
+      <div className="flex justify-between items-center">
+        <PageStatusBadge loading={loading} count={books.length} unit="books" />
         <Button onClick={openNew} className="gap-2" style={{ background: "var(--gradient-primary)" }}>
           <Plus className="h-4 w-4" /> Add Book
         </Button>
       </div>
+      {loading && books.length === 0 ? (
+        <div className="rounded-2xl border border-border bg-card overflow-hidden" style={{ boxShadow: "var(--shadow-card)" }}>
+          <TableSkeleton rows={5} cols={6} />
+        </div>
+      ) : books.length === 0 ? (
+        <EmptyState icon={BookOpen} title="No books yet" description="Upload a book to start building your library." action={
+          <Button onClick={openNew} className="gap-2" style={{ background: "var(--gradient-primary)" }}><Plus className="h-4 w-4" /> Add Book</Button>
+        } />
+      ) : (
       <div className="rounded-2xl border border-border bg-card overflow-hidden" style={{ boxShadow: "var(--shadow-card)" }}>
         <Table>
           <TableHeader>
@@ -174,6 +186,7 @@ function BooksTab() {
           </TableBody>
         </Table>
       </div>
+      )}
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
