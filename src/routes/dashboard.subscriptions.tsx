@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useData } from "@/store";
+import { Skeleton, PageStatusBadge } from "@/components/StateIndicators";
 import { toast } from "sonner";
 import type { Tier } from "@/data/mock";
 
@@ -60,6 +61,7 @@ function SubsPage() {
         <div>
           <h1 className="text-2xl font-bold">Subscriptions</h1>
           <p className="text-muted-foreground">Manage pricing and monitor growth.</p>
+          <div className="mt-2"><PageStatusBadge loading={!stats || loading} count={totalSubscribers} unit="subscribers" /></div>
         </div>
         <div className="flex gap-4">
           <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/10 text-primary border border-primary/20">
@@ -92,6 +94,9 @@ function SubsPage() {
           </div>
           
           <div className="h-80 w-full">
+          {!stats ? (
+            <Skeleton className="h-full w-full rounded-xl" />
+          ) : (
             <ResponsiveContainer width="100%" height="100%">
               {chartView === "count" ? (
                 <BarChart data={stats?.subscriptionGrowth}>
@@ -120,6 +125,7 @@ function SubsPage() {
                 </AreaChart>
               )}
             </ResponsiveContainer>
+          )}
           </div>
         </div>
 
