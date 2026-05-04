@@ -140,26 +140,51 @@ export const useData = create<DataState>((set, get) => ({
   },
   
   addNewBook: async (formData) => {
-    await createBook(formData);
-    await get().fetchBooks();
+    set({ loading: true });
+    try {
+      await createBook(formData);
+      await get().fetchBooks();
+    } finally {
+      set({ loading: false });
+    }
   },
   removeBook: async (id) => {
-    await deleteBook(id);
-    await get().fetchBooks();
+    set({ loading: true });
+    try {
+      await deleteBook(id);
+      await get().fetchBooks();
+    } finally {
+      set({ loading: false });
+    }
   },
   
   addNewStory: async (formData) => {
-    await createStory(formData);
-    await get().fetchStories();
+    set({ loading: true });
+    try {
+      await createStory(formData);
+      await get().fetchStories();
+    } finally {
+      set({ loading: false });
+    }
   },
   removeStory: async (id) => {
-    await deleteStory(id);
-    await get().fetchStories();
+    set({ loading: true });
+    try {
+      await deleteStory(id);
+      await get().fetchStories();
+    } finally {
+      set({ loading: false });
+    }
   },
   
   addNewSermon: async (data) => {
-    await createSermon(data);
-    await get().fetchSermons();
+    set({ loading: true });
+    try {
+      await createSermon(data);
+      await get().fetchSermons();
+    } finally {
+      set({ loading: false });
+    }
   },
   updatePlanPrice: (id, price) => {
     set((state) => ({
