@@ -136,7 +136,9 @@ function SubsPage() {
             <h3 className="font-bold">Summary</h3>
           </div>
           <div className="flex-1 space-y-4">
-            {stats?.subscriptionAnalytics?.map((s: any) => (
+            {!stats
+              ? Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-20 rounded-xl" />)
+              : stats?.subscriptionAnalytics?.map((s: any) => (
               <div key={s.tier} className="p-4 rounded-xl bg-muted/30 border border-border/50">
                 <div className="flex justify-between items-center mb-1">
                   <span className="font-semibold capitalize">{s.tier.toLowerCase()}</span>
