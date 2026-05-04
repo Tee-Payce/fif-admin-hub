@@ -78,6 +78,7 @@ function BooksTab() {
   const { books, addNewBook, removeBook, loading } = useData();
   const [open, setOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
   const [form, setForm] = useState({
     title: "",
     author: "",
@@ -88,6 +89,7 @@ function BooksTab() {
 
   const openNew = () => {
     setFile(null);
+    setCoverFile(null);
     setForm({ title: "", author: "", category: "STANDARD", price: "0", pages: "0" });
     setOpen(true);
   };
@@ -102,6 +104,9 @@ function BooksTab() {
 
     const formData = new FormData();
     formData.append("book", file);
+    if (coverFile) {
+      formData.append("cover", coverFile);
+    }
     formData.append("title", form.title);
     formData.append("author", form.author);
     formData.append("category", form.category);
@@ -176,23 +181,44 @@ function BooksTab() {
             <DialogTitle>Upload Book</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div 
-              className={`border-2 border-dashed border-border rounded-xl p-6 text-center text-sm text-muted-foreground flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-muted/50 transition ${file ? 'border-primary bg-primary/5' : ''}`}
-              onClick={() => document.getElementById('book-upload')?.click()}
-            >
-              <Upload className={`h-6 w-6 ${file ? 'text-primary' : ''}`} />
-              {file ? (
-                <span className="text-primary font-medium">{file.name}</span>
-              ) : (
-                <span>Upload PDF (click to select)</span>
-              )}
-              <input 
-                id="book-upload"
-                type="file" 
-                className="hidden" 
-                accept=".pdf" 
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
-              />
+            <div className="grid grid-cols-2 gap-3">
+              <div 
+                className={`border-2 border-dashed border-border rounded-xl p-4 text-center text-sm text-muted-foreground flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-muted/50 transition ${file ? 'border-primary bg-primary/5' : ''}`}
+                onClick={() => document.getElementById('book-upload')?.click()}
+              >
+                <Upload className={`h-6 w-6 ${file ? 'text-primary' : ''}`} />
+                {file ? (
+                  <span className="text-primary font-medium">{file.name}</span>
+                ) : (
+                  <span>Upload PDF</span>
+                )}
+                <input 
+                  id="book-upload"
+                  type="file" 
+                  className="hidden" 
+                  accept=".pdf" 
+                  onChange={(e) => setFile(e.target.files?.[0] || null)}
+                />
+              </div>
+
+              <div 
+                className={`border-2 border-dashed border-border rounded-xl p-4 text-center text-sm text-muted-foreground flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-muted/50 transition ${coverFile ? 'border-primary bg-primary/5' : ''}`}
+                onClick={() => document.getElementById('cover-upload')?.click()}
+              >
+                <Upload className={`h-6 w-6 ${coverFile ? 'text-primary' : ''}`} />
+                {coverFile ? (
+                  <span className="text-primary font-medium">{coverFile.name}</span>
+                ) : (
+                  <span>Upload Cover (Optional)</span>
+                )}
+                <input 
+                  id="cover-upload"
+                  type="file" 
+                  className="hidden" 
+                  accept="image/*" 
+                  onChange={(e) => setCoverFile(e.target.files?.[0] || null)}
+                />
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2 col-span-2">
@@ -310,8 +336,8 @@ function SermonsTab() {
         {sermons.map((s: any) => (
           <div key={s.id} className="rounded-2xl border border-border bg-card overflow-hidden transition hover:shadow-md" style={{ boxShadow: "var(--shadow-card)" }}>
             <div className="aspect-video flex items-center justify-center relative group" style={{ background: "var(--gradient-hero)" }}>
-              {s.thumbnailUrl ? (
-                <img src={s.thumbnailUrl} className="w-full h-full object-cover" alt={s.title} />
+              {s.coverUrl || s.thumbnailUrl ? (
+                <img src={s.coverUrl || s.thumbnailUrl} className="w-full h-full object-cover" alt={s.title} />
               ) : (
                 <div className="h-14 w-14 rounded-full bg-white/20 backdrop-blur flex items-center justify-center group-hover:scale-110 transition">
                   <div className="w-0 h-0 border-l-[14px] border-l-white border-y-[10px] border-y-transparent ml-1" />
